@@ -1,7 +1,13 @@
 import sqlite3
 
 # Global variables
+
 close = 1
+
+# sqlite3 variables
+
+con = None
+cur = None
 
 def userCommand(): 
     print("Waiting for commands")
@@ -11,12 +17,14 @@ def userCommand():
 # Functions for each command
 
 def connectDatabase():
-    print("Provide database name")
-    name = input("database name: ")
+    print("Provide a name for your new noteXpad")
+    name = input("noteXpad name: ")
     name = "/home/kpg/Projects/backendRoadmap/notexApp/source/src/" + name
-    print(name)
-    connect = sqlite3.connect(name)
-    print(f"Creating local database {name}")
+    global con
+    con = sqlite3.connect(name)
+    global cur
+    cur = con.cursor()
+    print(f"Creating local database (noteXpad): {name}")
 
 
 # Program control functions
