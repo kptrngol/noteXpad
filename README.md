@@ -1,6 +1,10 @@
 **noteXpad**
 
-Simple command line note-taking app built in Python with SQLite local server. 
+Simple command line note-taking app built in Python with sqlite3 (SQLite local server). 
+
+Dependencies:
+Python
+sqlite3
 
 MENU STRUCTURE:
 
