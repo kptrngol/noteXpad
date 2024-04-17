@@ -10,12 +10,12 @@ MENU STRUCTURE:
 
 ```console
 
-Structure:                                    Command
+Structure:                              Command     Action
 
 global menu
-    create xpad                               :cxp
-    delete xpad                               :dxp
-    select xpad (listing xnotes)              :sxp
+    create xpad                         :cxp        Creates new SQLite table/notepad
+    delete xpad                         :dxp        Deletes SQLite table/notepad
+    select xpad (listing xnotes)        :sxp        Selects specific SQLite table/notepad
         return
         sort
         create xnote
@@ -32,18 +32,24 @@ global menu
             delete tag
         delete xnote
     help
-    import
-    export
-    exit
+    directory                           :dir        Changes default directory for notepads
+    import                              :imp
+    export                              :exp
+    exit                                :e
 ```
 
-TO DO (global app ideas):
-- installer/script for building latest python dependency
-- sync options by export, import functions
+TO DO (must have):
 - nano compatibility
+- installer/script for building latest python dependency
+- sync options by export, import functions (.db / .csv)
+TO DO (optionally)
+- backup & online sync funcionality module (using postgresql)
 
-TO DO (noteXpad functions):
-- new noteXpad initialisation creates database template with attributes as: ID, CREATE DATE, LAST EDIT DATE, TAGS, TITLE, NOTE
+noteXpad functions:
+- new noteXpad initialisation creates database template with attributes as: 
+
+ID, CREATE DATE, LAST EDIT DATE, TAGS, TITLE, NOTE
+
 - editing notes updates attribute LAST EDIT DATE
 - change name option
 - list all notes option
