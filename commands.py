@@ -8,6 +8,7 @@ close = 1
 
 con = None
 cur = None
+currentDirectory = None
 
 def userCommand(): 
     print("Waiting for commands")
@@ -16,10 +17,15 @@ def userCommand():
 
 # Functions for each command
 
+# Saving global variables for next sessions in a table 
+
 def connectDatabase():
+    print("Provide an default noteXpad directory address")
+    global currentDirectory 
+    currentDirectory =  input("noteXpad directory: ") 
     print("Provide a name for your new noteXpad")
     name = input("noteXpad name: ")
-    name = "/home/kpg/Projects/backendRoadmap/notexApp/source/src/" + name
+    name = currentDirectory + name
     global con
     con = sqlite3.connect(name)
     global cur
