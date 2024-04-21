@@ -1,6 +1,7 @@
 import sqlite3
+import os
 
-# Global variables
+# Global application variables
 
 close = 1
 
@@ -8,7 +9,7 @@ close = 1
 
 con = None
 cur = None
-currentDirectory = None
+currentDirectory = os.getcwd()
 
 def userCommand(): 
     print("Waiting for commands")
@@ -19,18 +20,23 @@ def userCommand():
 
 # Saving global variables for next sessions in a table 
 
-def connectDatabase():
-    print("Provide an default noteXpad directory address")
+def selectXpad():
+
+    print("Provide a directory address for new noteXpad instance\nType 'default' for default script working directory\nType specific address for custom working directory")
+    addresType = input("--> ")
     global currentDirectory 
-    currentDirectory =  input("noteXpad directory: ") 
-    print("Provide a name for your new noteXpad")
+    if (addressType == "default"):
+        currentDirectory = os.getcwd()  
+    else:
+        currentDirectory = addressType
+    print("Provide a name for your new noteXpad instance")
     name = input("noteXpad name: ")
-    name = currentDirectory + name
+    name = currentDirectory + "/" + name
     global con
     con = sqlite3.connect(name)
     global cur
     cur = con.cursor()
-    print(f"Creating local database (noteXpad): {name}")
+    print(f"Creating noteXpad instance: {name}")
 
 
 # Program control functions
@@ -42,7 +48,7 @@ def performAction(command):
             print("Closing")
             return close
         case "c" | "connect":
-            connectDatabase()
+            selectXpad()
         case _:
             print("Try again")
 

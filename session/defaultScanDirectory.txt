@@ -1,0 +1,1 @@
+/home/kpg/Projects/backendRoadmap/notexApp/source/src/session/defaultScanDirectory.txt
