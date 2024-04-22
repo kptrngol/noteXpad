@@ -40,17 +40,14 @@ global menu
 
 TO DO (must have):
 - nano compatibility
-- installer/script for building latest python dependency
+- installer/script for building python dependency
 - sync options by export, import functions (.db / .csv)
 TO DO (optionally)
 - backup & online sync funcionality module (using postgresql)
 
 noteXpad functions:
 - new noteXpad initialisation creates database template with attributes as: 
-
 ID, CREATE DATE, LAST EDIT DATE, TAGS, TITLE, NOTE
 
-- editing notes updates attribute LAST EDIT DATE
-- change name option
-- list all notes option
-- view next note option
+TO FIX
+- set up default directory for session data and notexpads data, check for these during initialisation
