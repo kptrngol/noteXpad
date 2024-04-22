@@ -17,38 +17,43 @@ def userCommand():
     return command
 
 # Functions for each command
+def selectXpad(defaultScanPath):
+    print(f"Select noteXpad file {os.listdir(defaultScanPath)}")
+    print(os.listdir(defaultScanPath))
+    selectedXpad = input("--> ")
+    # Check
+    for noteXpad in os.listdir(defaultScanPath):
+        if (selectedXpad == noteXpad):
+            name = defaultScanPath + noteXpad
+            print(f"Connecting to: {name}")
+            global con
+            con = sqlite3.connect(name)
+            global cur
+            cur = con.cursor()
+        else:
+            print("There is no such noteXpad in this directory, check the file name spelling")
+            return False
 
-# Saving global variables for next sessions in a table 
-
-def selectXpad():
-
-    print("Provide a directory address for new noteXpad instance\nType 'default' for default script working directory\nType specific address for custom working directory")
-    addresType = input("--> ")
-    global currentDirectory 
-    if (addressType == "default"):
-        currentDirectory = os.getcwd()  
-    else:
-        currentDirectory = addressType
-    print("Provide a name for your new noteXpad instance")
-    name = input("noteXpad name: ")
-    name = currentDirectory + "/" + name
-    global con
-    con = sqlite3.connect(name)
-    global cur
-    cur = con.cursor()
-    print(f"Creating noteXpad instance: {name}")
+def printHelp():
+    f = open(currentDirectory + "/help.md","r", encoding="utf-8")
+    print(f.read())
+    
 
 
 # Program control functions
-def performAction(command):
+def performAction(command,defaultScanPath):
     match command:
-        case "e" | "end" | "leave" | "finish" | "close":
+        case "e" | "exit":
             global close
             close = 0
             print("Closing")
             return close
-        case "c" | "connect":
-            selectXpad()
+        case "sxp":
+            selectXpad(defaultScanPath)
+        case "cxp":
+            createXpad()
+        case "h" | "help":
+            printHelp()
         case _:
             print("Try again")
 

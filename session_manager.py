@@ -1,16 +1,19 @@
 import os 
 
-def provideScanDirectory():
-    directory = os.getcwd() + "/session/defaultScanDirectory.txt"
+def returnScanPath():
+    scanPathData = os.getcwd() + "/session/defaultScanPath.txt"
     try: 
-        f = open(directory,"r", encoding="utf-8")
-        scanDirectory = f.read()
-        return scanDirectory
+        f = open(scanPathData,"r", encoding="utf-8")
+        scanPath = f.read()
+        return scanPath
     except FileNotFoundError:
         print("Setting up default noteXpads scan directory")
-        directory = os.getcwd() + "/session/defaultScanDirectory.txt"
-        f = open(directory,"w", encoding="utf-8")
+        scanPathData = os.getcwd() + "/session/defaultScanPath.txt"
+        f = open(scanPathData,"w", encoding="utf-8")
+        directory = os.getcwd() + "/noteXpads/"
         f.write(f"{directory}")
+    except Exception as error:
+        print(f"Error: {error}")
 
 
 
