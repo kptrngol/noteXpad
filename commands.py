@@ -8,22 +8,46 @@ close = 1
 
 # sqlite3 variables
 
-con = None
-cur = None
+con = None # Connection global variable
+cur = None # Cursor global variable
 currentDirectory = os.getcwd()
 currentXpad = None
 
-def userCommand(): 
+def userCommand():
+    """
+    Prompts user for a command which is passed as an argument to performAction().
+    This allows user to move across program's menu. 
+    """
     pattern = r"([^/]+\.db)$" 
     try:
-        print(f"Waiting for commands\nCurrently selected xpad: {(re.search(pattern,currentXpad)).group()}")
+        print(f"""
+        ------------------------
+        Waiting for commands
+        Currently selected xpad: {(re.search(pattern,currentXpad)).group()}
+        ------------------------
+        """)
     except Exception:
-        print(f"Waiting for commands\nCurrently selected xpad: None")
+        print(f"""
+        ------------------------
+        Waiting for commands
+        Currently selected xpad: None
+        ------------------------
+        """)
     command = input("--> ")
     return command
 
+def closeCurrentXpad():
+    try:
+        cur.close()
+        print("Closed current xnote")
+    except AttributeError:
+        return
+    except Exception as error:
+        print(f"Error: {error}")
+
 # Functions for each command
 def selectXpad(defaultScanPath):
+    closeCurrentXpad()
     print(f"Select noteXpad file {os.listdir(defaultScanPath)}")
     print(os.listdir(defaultScanPath))
     selectedXpad = input("--> ")
@@ -47,6 +71,7 @@ def printHelp():
     print(f.read())
     
 def createXpad(defaultScanPath):
+    # Check if it not exists
     print(f"Name new noteXpad file")
     newXpad = input("--> ")
     name = defaultScanPath + newXpad
@@ -56,6 +81,7 @@ def createXpad(defaultScanPath):
     if (not (response == "y")):
         return
     else:
+        closeCurrentXpad()
         print(f"Connecting to: {name}")
         global currentXpad
         currentXpad = name
@@ -63,19 +89,59 @@ def createXpad(defaultScanPath):
         con = sqlite3.connect(name)
         global cur
         cur = con.cursor()
+        try: 
+            cur.execute("""
+            CREATE TABLE IF NOT EXISTS xnote (
+                id INTEGER PRIMARY KEY,
+                title TEXT NOT NULL UNIQUE,
+                body TEXT);
+            """)
+            con.commit()
+        except Exception as error:
+            print(f"Error: {error}")
+
+def selectXnote():
+    return
+
+def createXnote():
+    # Check for currently selected noteXpad
+    if((currentXpad == None)):
+        print("First select noteXpad using 'sxp' command")
+        return
+    else:
+        print(f"Adding xnote to {currentXpad}")
+        # Ask for title 
+        print("Name xnote")
+        xnoteName = input("--> ")
+        # Ask for content
+        print("Write xnote")
+        xnoteBody = input("--> ")
+        try:
+            cur.execute("""
+            INSERT INTO :xPadName (title, body)
+            VALUES(:xnoteName, :xnoteBody);
+            """,{"xPadName": currentXpad, "xnoteName": xnoteName, "xnoteBody": xnoteBody})
+            con.commit()
+        except Exception as error:
+            print(f"Error: {error}")
+
 
 # Program control functions
 def performAction(command,defaultScanPath):
     match command:
         case "e" | "exit":
+            closeCurrentXpad()
             global close
             close = 0
-            print("Closing")
             return close
         case "sxp":
             selectXpad(defaultScanPath)
         case "cxp":
             createXpad(defaultScanPath)
+        case "sxn":
+            selectXnote()
+        case "cxn":
+            createXnote()
         case "h" | "help":
             printHelp()
         case _:

@@ -12,7 +12,6 @@ def returnScanPath():
         f = open(scanPathData,"w", encoding="utf-8")
         directory = os.getcwd() + "/noteXpads/"
         f.write(f"{directory}")
-        
         f = open(scanPathData,"r", encoding="utf-8")
         scanPath = f.read()
         return scanPath

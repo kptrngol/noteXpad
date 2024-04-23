@@ -16,10 +16,11 @@ global menu
     create xpad                         :cxp        Creates new SQLite table/notepad
     delete xpad                         :dxp        Deletes SQLite table/notepad
     select xpad (listing xnotes)        :sxp        Selects specific SQLite table/notepad
-        return
+
         sort
-        create xnote
-        read xnote
+        create xnote                    :cxn        Creates new note in the currently selected xpad
+        readall xnote                   
+        read xnote                      
             previous
             next
         update xnote
@@ -50,4 +51,12 @@ noteXpad functions:
 ID, CREATE DATE, LAST EDIT DATE, TAGS, TITLE, NOTE
 
 TO FIX
+
+- check test.db issue
+- check new xnote issue
+
+------------
 - set up default directory for session data and notexpads data, check for these during initialisation
+- Handle connection for proper data management 
+- Commit and close when force exit function
+- Handling existing notes to edit them (copying them to temporary file and edit it with nano then commit it to database?)
