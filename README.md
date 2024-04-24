@@ -52,7 +52,7 @@ global menu
     export                              :exp
     exit                                :e
 ```
-**Developement notes**
+**Development notes**
 ---
 TO DO (must have):
 - nano compatibility
