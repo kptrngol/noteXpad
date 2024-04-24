@@ -1,62 +1,67 @@
 **noteXpad**
+---
+Simple, offline, command line note-taking app built in Python with sqlite3 (SQLite local server). 
 
-Simple command line note-taking app built in Python with sqlite3 (SQLite local server). 
+Using only few commands noteXpad allows for fast note creation directly from command line, it was designed for users of tmux-like programs with multiple programs run in one terminal.
 
-Dependencies:
-Python
-sqlite3
+**Dependencies**
+---
 
-MENU STRUCTURE:
+Python 3.11.8,
+SQLite version 3.42.0,
+GNU nano 7.2 (to be added)
+
+**Installation**
+---
+- Install Python, SQLite, nano
+- Download all files from this repo into choosen directory
+- Edit nxp.sh script (to see the path to paste just use `pwd` command from the script directory):
+```
+#! /bin/bash
+echo 'Running noteXpad'
+python PASTE THE PATH
+```
+- Add this script path at the end of .bashrc or other shell run commands file (usually located in /home/user ) to conveniently access it from different locations
+```
+export PATH="$HOME/PASTE THE PATH/:$PATH"
+```
+
+**Menu**
+---
 
 ```console
 
 Structure:                              Command     Action
 
 global menu
-    create xpad                         :cxp        Creates new SQLite table/notepad
-    delete xpad                         :dxp        Deletes SQLite table/notepad
-    select xpad (listing xnotes)        :sxp        Selects specific SQLite table/notepad
+    create Xpad                         :cxp        Creates new SQLite table/notepad
+    delete Xpad                         :dxp        Deletes SQLite table/notepad
+    select Xpad (listing xnotes)        :sxp        Selects specific SQLite table/notepad
 
-        sort
-        create xnote                    :cxn        Creates new note in the currently selected xpad
-        readall xnote                   
-        read xnote                      
-            previous
-            next
+        create xnote                    :cxn        Creates new note in the currently selected Xpad
+        delete xnote
         update xnote
-            return
             name
             body
-            create tag
-            read tag
-            update tag
-            delete tag
-        delete xnote
+        listall xnote                   :laxn       List all xnotes from currently selected Xpad
+        printall xnote                  :paxn       Print all xnotes from currently selected Xpad
+        
     help                                :h
     directory                           :dir        Changes default directory for notepads
     import                              :imp
     export                              :exp
     exit                                :e
 ```
-
+**Developement notes**
+---
 TO DO (must have):
 - nano compatibility
 - installer/script for building python dependency
 - sync options by export, import functions (.db / .csv)
 TO DO (optionally)
 - backup & online sync funcionality module (using postgresql)
-
-noteXpad functions:
-- new noteXpad initialisation creates database template with attributes as: 
-ID, CREATE DATE, LAST EDIT DATE, TAGS, TITLE, NOTE
-
-TO FIX
-
-- check test.db issue
-- check new xnote issue
-
-------------
-- set up default directory for session data and notexpads data, check for these during initialisation
-- Handle connection for proper data management 
 - Commit and close when force exit function
 - Handling existing notes to edit them (copying them to temporary file and edit it with nano then commit it to database?)
+TO FIX
+- Adding name restrictions for Xpad and xnote creation
+- Adding longer commands with command + xp / xn name

@@ -13,6 +13,7 @@ cur = None # Cursor global variable
 currentDirectory = os.getcwd()
 currentXpad = None
 
+
 def userCommand():
     """
     Prompts user for a command which is passed as an argument to performAction().
@@ -36,6 +37,8 @@ def userCommand():
     command = input("--> ")
     return command
 
+# Functions for each command
+
 def closeCurrentXpad():
     try:
         cur.close()
@@ -45,15 +48,19 @@ def closeCurrentXpad():
     except Exception as error:
         print(f"Error: {error}")
 
-# Functions for each command
+def printHelp():
+    f = open(currentDirectory + "/help.md","r", encoding="utf-8")
+    print(f.read())
+
 def selectXpad(defaultScanPath):
     closeCurrentXpad()
-    print(f"Select noteXpad file {os.listdir(defaultScanPath)}")
+    print(f"Select noteXpad file (type full file name) {os.listdir(defaultScanPath)}")
     print(os.listdir(defaultScanPath))
     selectedXpad = input("--> ")
-    # Check
+    # Add check for ".db" code
+    check = False
     for noteXpad in os.listdir(defaultScanPath):
-        if (selectedXpad == noteXpad):
+        if selectedXpad == noteXpad:
             name = defaultScanPath + noteXpad
             print(f"Connecting to: {name}")
             global currentXpad
@@ -62,19 +69,15 @@ def selectXpad(defaultScanPath):
             con = sqlite3.connect(name)
             global cur
             cur = con.cursor()
-        else:
-            print("There is no such noteXpad in this directory, check the file name spelling")
-            return False
+            check = True
+    if not check:
+        print("There is no such noteXpad in this directory, check the file name spelling")
 
-def printHelp():
-    f = open(currentDirectory + "/help.md","r", encoding="utf-8")
-    print(f.read())
-    
 def createXpad(defaultScanPath):
     # Check if it not exists
     print(f"Name new noteXpad file")
     newXpad = input("--> ")
-    name = defaultScanPath + newXpad
+    name = defaultScanPath + newXpad + ".db"
 
     print(f"Connect to {name}?")
     response = input("yes [y] or no [n]:")
@@ -100,8 +103,47 @@ def createXpad(defaultScanPath):
         except Exception as error:
             print(f"Error: {error}")
 
-def selectXnote():
-    return
+def listAllXnotes():
+    # Check for currently selected noteXpad
+    if((currentXpad == None)):
+        print("First select noteXpad using 'sxp' command")
+        return
+    else:
+        xnoteTitles = cur.execute("SELECT title FROM xnote")
+        print(f"Notes from this noteXpad: {xnoteTitles.fetchall()}")
+
+def printAllXnotes():
+    # Check for currently selected noteXpad
+    if((currentXpad == None)):
+        print("First select noteXpad using 'sxp' command")
+        return
+    else:
+        xnoteTitles = cur.execute("SELECT title, body FROM xnote")
+        print(f"Notes from this noteXpad: {xnoteTitles.fetchall()}")
+
+
+
+# def selectXnote():
+#     # # Check for currently selected noteXpad
+#     # if((currentXpad == None)):
+#     #     print("First select noteXpad using 'sxp' command")
+#     #     return
+#     # else:
+#     #     print(f"Adding xnote to {currentXpad}")
+#     #     # Ask for title 
+#     #     print("Name xnote")
+#     #     xnoteName = input("--> ")
+#     #     # Ask for content
+#     #     print("Write xnote")
+#     #     xnoteBody = input("--> ")
+#     #     try:
+#     #         cur.execute("""
+#     #         INSERT INTO xnote (title, body)
+#     #         VALUES(:xnoteName, :xnoteBody);
+#     #         """,{"xnoteName": xnoteName, "xnoteBody": xnoteBody})
+#     #         con.commit()
+#     #     except Exception as error:
+#     #         print(f"Error: {error}")
 
 def createXnote():
     # Check for currently selected noteXpad
@@ -118,9 +160,9 @@ def createXnote():
         xnoteBody = input("--> ")
         try:
             cur.execute("""
-            INSERT INTO :xPadName (title, body)
+            INSERT INTO xnote (title, body)
             VALUES(:xnoteName, :xnoteBody);
-            """,{"xPadName": currentXpad, "xnoteName": xnoteName, "xnoteBody": xnoteBody})
+            """,{"xnoteName": xnoteName, "xnoteBody": xnoteBody})
             con.commit()
         except Exception as error:
             print(f"Error: {error}")
@@ -134,16 +176,21 @@ def performAction(command,defaultScanPath):
             global close
             close = 0
             return close
+        case "h" | "help":
+            printHelp()
         case "sxp":
             selectXpad(defaultScanPath)
+            listAllXnotes()
         case "cxp":
             createXpad(defaultScanPath)
         case "sxn":
             selectXnote()
         case "cxn":
             createXnote()
-        case "h" | "help":
-            printHelp()
+        case "laxn":
+            listAllXnotes()
+        case "paxn":
+            printAllXnotes()
         case _:
             print("Try again")
 
