@@ -4,7 +4,7 @@ def returnScanPath():
     scriptPath = os.path.abspath(__file__) 
     scanPathDir = os.path.dirname(scriptPath)
     scanPathData = scanPathDir + "/session/defaultScanPath.txt"
-    print(scanPathDir, scanPathData)
+    # print(scanPathDir, scanPathData)
     try: 
         f = open(scanPathData,"r", encoding="utf-8")
         scanPath = f.read()

@@ -14,24 +14,30 @@ currentDirectory = os.getcwd()
 currentXpad = None
 
 
-def userCommand():
+def userCommand(defaultScanPath):
     """
-    Prompts user for a command which is passed as an argument to performAction().
+    Prompts user for a command which is passed as an argument to performAction(). This function prints default view between commands in terminal.
     This allows user to move across program's menu. 
     """
-    pattern = r"([^/]+\.db)$" 
+    pattern = r"([^/]+\.db)$"
+    if currentXpad is None:
+        currentXpadResult = "None"
+    else:
+        currentXpadResult = re.search(pattern,currentXpad).group()
+
     try:
         print(f"""
         ------------------------
         Waiting for commands
-        Currently selected xpad: {(re.search(pattern,currentXpad)).group()}
+        Available Xpads: {os.listdir(defaultScanPath)}
+        Currently selected Xpad: {currentXpadResult}
         ------------------------
         """)
     except Exception:
         print(f"""
         ------------------------
         Waiting for commands
-        Currently selected xpad: None
+        Currently selected Xpad: None
         ------------------------
         """)
     command = input("--> ")
@@ -107,10 +113,14 @@ def listAllXnotes():
     # Check for currently selected noteXpad
     if((currentXpad == None)):
         print("First select noteXpad using 'sxp' command")
-        return
     else:
         xnoteTitles = cur.execute("SELECT title FROM xnote")
-        print(f"Notes from this noteXpad: {xnoteTitles.fetchall()}")
+        print(f"""
+        ------------------------
+        Notes from this noteXpad: {xnoteTitles.fetchall()}
+        ------------------------
+        """)
+        return
 
 def printAllXnotes():
     # Check for currently selected noteXpad
@@ -119,7 +129,13 @@ def printAllXnotes():
         return
     else:
         xnoteTitles = cur.execute("SELECT title, body FROM xnote")
-        print(f"Notes from this noteXpad: {xnoteTitles.fetchall()}")
+        for xnote in xnoteTitles.fetchall():
+            print(f"""
+            ------------------------
+            {xnote[0]}
+            {xnote[1]}
+            ------------------------
+            """)
 
 
 

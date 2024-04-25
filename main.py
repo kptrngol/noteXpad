@@ -5,9 +5,8 @@ import os
 # Starting session
 defaultScanPath = sm.returnScanPath()
 print(f"Scan path: {defaultScanPath}")
-print(os.listdir(defaultScanPath))
 
 while c.close:
     # Listing all notepads from default directory
     # Listing all notes if connected to notepad
-    c.performAction(c.userCommand(),defaultScanPath)
+    c.performAction(c.userCommand(defaultScanPath),defaultScanPath)
