@@ -1,6 +1,8 @@
 import sqlite3
 import os
 import re
+import curses
+from curses import wrapper
 
 # Global application variables
 
@@ -13,8 +15,16 @@ cur = None # Cursor global variable
 currentDirectory = os.getcwd()
 currentXpad = None
 
+# Main functions
+
+def cursesInit(stdscr):
+    stdscr.clear()
+    stdscr.refresh()
+    stdscr.getch()
+
 
 def userCommand(defaultScanPath):
+
     """
     Prompts user for a command which is passed as an argument to performAction(). This function prints default view between commands in terminal.
     This allows user to move across program's menu. 
@@ -48,7 +58,7 @@ def userCommand(defaultScanPath):
 def closeCurrentXpad():
     try:
         cur.close()
-        print("Closed current xnote")
+        print("Closed current Xpad")
     except AttributeError:
         return
     except Exception as error:
@@ -114,13 +124,13 @@ def listAllXnotes():
     if((currentXpad == None)):
         print("First select noteXpad using 'sxp' command")
     else:
-        xnoteTitles = cur.execute("SELECT title FROM xnote")
+        xnoteTitles = cur.execute("SELECT id, title FROM xnote")
         print(f"""
         ------------------------
         Notes from this noteXpad: {xnoteTitles.fetchall()}
         ------------------------
         """)
-        return
+        return xnoteTitles.fetchall()
 
 def printAllXnotes():
     # Check for currently selected noteXpad
@@ -136,30 +146,6 @@ def printAllXnotes():
             {xnote[1]}
             ------------------------
             """)
-
-
-
-# def selectXnote():
-#     # # Check for currently selected noteXpad
-#     # if((currentXpad == None)):
-#     #     print("First select noteXpad using 'sxp' command")
-#     #     return
-#     # else:
-#     #     print(f"Adding xnote to {currentXpad}")
-#     #     # Ask for title 
-#     #     print("Name xnote")
-#     #     xnoteName = input("--> ")
-#     #     # Ask for content
-#     #     print("Write xnote")
-#     #     xnoteBody = input("--> ")
-#     #     try:
-#     #         cur.execute("""
-#     #         INSERT INTO xnote (title, body)
-#     #         VALUES(:xnoteName, :xnoteBody);
-#     #         """,{"xnoteName": xnoteName, "xnoteBody": xnoteBody})
-#     #         con.commit()
-#     #     except Exception as error:
-#     #         print(f"Error: {error}")
 
 def createXnote():
     # Check for currently selected noteXpad
@@ -183,26 +169,44 @@ def createXnote():
         except Exception as error:
             print(f"Error: {error}")
 
+def editXnote():
+    print("Select xnote id to edit")
+    listAllXnotes()
+    selectedXnoteId = input("--> ")
+
+    xnotes = cur.execute("SELECT id, title, body FROM xnote")
+    for xnote in xnotes:
+        if selectedXnoteId == str(xnote[0]):
+            selectedXnoteTitle = xnote[1]
+            selectedXnoteBody = xnote[2]
+            print(f"Editing {selectedXnoteTitle} with {selectedXnoteBody}")
+        else:
+            print("Please, provide the correct ID")
+    # wrapper(cursesInit)
+
 
 # Program control functions
 def performAction(command,defaultScanPath):
+    os.system("clear")
     match command:
         case "e" | "exit":
             closeCurrentXpad()
+            print("Closing noteXpad session")
             global close
             close = 0
             return close
         case "h" | "help":
             printHelp()
         case "sxp":
+            os.system("clear")
             selectXpad(defaultScanPath)
             listAllXnotes()
         case "cxp":
             createXpad(defaultScanPath)
-        case "sxn":
-            selectXnote()
         case "cxn":
             createXnote()
+        case "exn":
+            editXnote()
         case "laxn":
             listAllXnotes()
         case "paxn":
