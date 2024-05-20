@@ -2,6 +2,7 @@ import sqlite3
 import os
 import re
 import curses
+import curses.textpad
 from curses import wrapper
 
 # Global application variables
@@ -20,7 +21,6 @@ currentXpad = None
 def cursesInit(stdscr):
     stdscr.clear()
     stdscr.refresh()
-    stdscr.getch()
 
 
 def userCommand(defaultScanPath):
@@ -112,7 +112,7 @@ def createXpad(defaultScanPath):
             cur.execute("""
             CREATE TABLE IF NOT EXISTS xnote (
                 id INTEGER PRIMARY KEY,
-                title TEXT NOT NULL UNIQUE,
+                title TEXT NOT NULL,
                 body TEXT);
             """)
             con.commit()
@@ -125,12 +125,13 @@ def listAllXnotes():
         print("First select noteXpad using 'sxp' command")
     else:
         xnoteTitles = cur.execute("SELECT id, title FROM xnote")
+        xnoteTitlesResults = xnoteTitles.fetchall()
         print(f"""
         ------------------------
-        Notes from this noteXpad: {xnoteTitles.fetchall()}
+        Notes from this noteXpad: {xnoteTitlesResults}
         ------------------------
         """)
-        return xnoteTitles.fetchall()
+        return xnoteTitlesResults
 
 def printAllXnotes():
     # Check for currently selected noteXpad
@@ -169,20 +170,55 @@ def createXnote():
         except Exception as error:
             print(f"Error: {error}")
 
-def editXnote():
-    print("Select xnote id to edit")
-    listAllXnotes()
-    selectedXnoteId = input("--> ")
-
+def editXnote(stdscr):
+    stdscr.clear()
+    notesToShow = listAllXnotes()
+    stdscr.addstr(0,0,f"{notesToShow}")
+    stdscr.addstr(1,0,"Select xnote id to edit")
+    selectedXnoteId = stdscr.getkey()
     xnotes = cur.execute("SELECT id, title, body FROM xnote")
+    
     for xnote in xnotes:
         if selectedXnoteId == str(xnote[0]):
+            stdscr.clear()
             selectedXnoteTitle = xnote[1]
             selectedXnoteBody = xnote[2]
-            print(f"Editing {selectedXnoteTitle} with {selectedXnoteBody}")
+            stdscr.addstr(0,0,f"{selectedXnoteTitle} with {selectedXnoteBody}")
+            
+            # title edit
+            stdscr.clear()
+            stdscr.addstr(0,0, "Would you like to update the xnote's title?")
+            stdscr.addstr(1,0, "yes [y] or no [n]:")
+            updateTitle = stdscr.getkey()
+            if updateTitle == "y":
+                stdscr.clear()
+                stdscr.addstr(0,0, "Edit your xnote's title and press Ctrl-G to finish")
+                notePad = curses.textpad.Textbox(stdscr)
+                notePad.edit()
+                selectedXnoteTitle = notePad.gather()
+
+            # xnote body edit
+            stdscr.clear()
+            stdscr.addstr(0,0, "Would you like to update the xnote's body?")
+            stdscr.addstr(1,0, "yes [y] or no [n]:")
+            updateBody = stdscr.getkey()
+            if updateBody == "y":
+                stdscr.clear()
+                stdscr.addstr(0,0, "Edit your xnote and press Ctrl-G to finish")
+                notePad = curses.textpad.Textbox(stdscr)
+                notePad.edit()
+                selectedXnoteBody = notePad.gather()
+
+            if (updateBody == "y" or updateTitle == "y"):                    
+                cur.execute("""
+                UPDATE xnote 
+                SET title = :newTitle, body = :updateBody
+                WHERE id = :updateId;
+                """,{"newTitle" : selectedXnoteTitle, "updateBody" : selectedXnoteBody, "updateId" : selectedXnoteId})
+                con.commit()
+            
         else:
             print("Please, provide the correct ID")
-    # wrapper(cursesInit)
 
 
 # Program control functions
@@ -206,7 +242,7 @@ def performAction(command,defaultScanPath):
         case "cxn":
             createXnote()
         case "exn":
-            editXnote()
+            wrapper(editXnote)
         case "laxn":
             listAllXnotes()
         case "paxn":

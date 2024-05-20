@@ -47,26 +47,7 @@ global menu
         printall xnotes                 :paxn       Print all xnotes from currently selected Xpad
         
     help                                :h
-    directory                           :dir        Changes default directory for notepads
-    import                              :imp
-    export                              :exp
     exit                                :e
 ```
-**Development notes**
----
-TO DO (must have):
-- Adding tags management, and time stamps, as using sqlite is justified only by more advanced sorting/categorising features implementation
-- installer/script for building python dependency
-- sync options by export, import functions (.db / .csv)
-
-TO DO (optionally)
-- Possibility to type number representing each noteXpad + also quick selection for xnotes
-- backup & online sync funcionality module (using postgresql)
-- Commit and close when force exit function
-- Handling existing notes to edit them (copying them to temporary file and edit it with nano then commit it to database?)
-
-TO FIX
-- Adding name restrictions for Xpad and xnote creation
-- Adding longer commands with command + xp / xn name
 
 

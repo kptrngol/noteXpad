@@ -9,7 +9,5 @@ global menu
         listall xnotes                  :laxn       List all xnotes from currently selected Xpad
         printall xnotes                 :paxn       Print all xnotes from currently selected Xpad
     help                                :h
-    directory                           :dir        Changes default directory for notepads
-    import                              :imp
-    export                              :exp
     exit                                :e
+```
