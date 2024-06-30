@@ -64,8 +64,8 @@ def closeCurrentXpad():
     except Exception as error:
         print(f"Error: {error}")
 
-def printHelp():
-    f = open(currentDirectory + "/help.md","r", encoding="utf-8")
+def printHelp(defaultScanPath):
+    f = open(defaultScanPath + "/help.md","r", encoding="utf-8")
     print(f.read())
 
 def selectXpad(defaultScanPath):
@@ -232,7 +232,7 @@ def performAction(command,defaultScanPath):
             close = 0
             return close
         case "h" | "help":
-            printHelp()
+            printHelp(defaultScanPath)
         case "sxp":
             os.system("clear")
             selectXpad(defaultScanPath)
