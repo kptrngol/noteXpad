@@ -174,7 +174,7 @@ def editXnote(stdscr):
     stdscr.clear()
     notesToShow = listAllXnotes()
     stdscr.addstr(0,0,f"{notesToShow}")
-    stdscr.addstr(1,0,"Select xnote id to edit")
+    stdscr.addstr(1,0,"Select xnote id to edit. Use CTRL-G to save changes.")
     selectedXnoteId = stdscr.getkey()
     xnotes = cur.execute("SELECT id, title, body FROM xnote")
     
@@ -192,7 +192,7 @@ def editXnote(stdscr):
             updateTitle = stdscr.getkey()
             if updateTitle == "y":
                 stdscr.clear()
-                stdscr.addstr(0,0, "Edit your xnote's title and press Ctrl-G to finish")
+                stdscr.addstr(0,0, selectedXnoteTitle)
                 notePad = curses.textpad.Textbox(stdscr)
                 notePad.edit()
                 selectedXnoteTitle = notePad.gather()
@@ -204,7 +204,7 @@ def editXnote(stdscr):
             updateBody = stdscr.getkey()
             if updateBody == "y":
                 stdscr.clear()
-                stdscr.addstr(0,0, "Edit your xnote and press Ctrl-G to finish")
+                stdscr.addstr(0,0, selectedXnoteBody)
                 notePad = curses.textpad.Textbox(stdscr)
                 notePad.edit()
                 selectedXnoteBody = notePad.gather()
